@@ -1,3 +1,161 @@
+
+
+CREATE DATABASE IF NOT EXISTS Jobclub;
+USE Jobclub;
+/*
+
+	Project Part 2 SQL 
+
+*/
+
+-- PERSON
+create table person(
+	pid varchar(30),
+	passwd  char(32),
+	fname varchar(50),
+	lname varchar(100),
+	PRIMARY KEY (pid)
+);
+
+-- instructor
+create table instructor(
+	pid varchar(30),
+	phone char(12),
+	PRIMARY KEY (pid),
+	FOREIGN KEY (pid) REFERENCES person(pid)
+);
+
+-- Student
+create table student(
+	pid varchar(30),
+	gender varchar(10),
+	class varchar(20),
+	PRIMARY KEY (pid),
+    FOREIGN KEY (pid) REFERENCES person(pid)
+);
+
+
+-- section
+create table section(
+	sectionid integer auto_increment,
+	cname varchar(100),
+	descr varchar(100),
+	PRIMARY KEY (sectionid)
+);
+
+-- instructor_of
+create table instructor_of(
+	pid varchar(30),
+	sectionid integer,
+	PRIMARY KEY (pid,sectionid),
+	FOREIGN KEY (pid) REFERENCES instructor(pid),
+	FOREIGN KEY (sectionid) REFERENCES section(sectionid)
+);
+
+
+-- idea
+create table idea(
+	id integer auto_increment,
+	ename varchar(100),
+	description varchar(255),
+	edatetime datetime,
+	is_active boolean,
+    pid varchar(30),	
+	PRIMARY KEY (id),
+ 	FOREIGN KEY (pid) REFERENCES student(pid)
+);
+
+-- Keywords
+create table keywords(
+	topic varchar(30),
+	PRIMARY KEY (topic)
+);
+
+-- Interested_in
+create table interested_in(
+	pid varchar(30),
+	topic varchar(100),
+	PRIMARY KEY (pid,topic),
+	FOREIGN KEY (pid) REFERENCES person(pid),
+	FOREIGN KEY (topic) REFERENCES keywords(topic)
+);
+
+
+-- Member_of
+create table member_of(
+	pid varchar(30),
+	sectionid integer,
+	PRIMARY KEY (pid,sectionid),
+	FOREIGN KEY (pid) REFERENCES student(pid),
+	FOREIGN KEY (sectionid) REFERENCES section(sectionid)
+);
+
+
+-- multivalued attribute representing role in section
+create table role_in(
+	pid varchar(30),
+	sectionid integer,
+	role varchar(30),
+	PRIMARY KEY (pid,sectionid,role),
+	FOREIGN KEY (pid,sectionid) REFERENCES member_of(pid,sectionid)
+);
+
+
+-- Sign_up
+create table sign_up(
+	pid varchar(30),
+	id integer,
+	PRIMARY KEY (pid,id),
+	FOREIGN KEY (pid) REFERENCES person(pid),
+	FOREIGN KEY (id) REFERENCES idea(id)
+);
+
+-- Sponsored_by (only needed if idea can be co-sponsored)
+-- create table sponsored_by(
+-- 	clubid integer,
+-- 	id integer,
+-- 	PRIMARY KEY (clubid, id),
+-- 	FOREIGN KEY (clubid) REFERENCES club(clubid),
+-- 	FOREIGN KEY (id) REFERENCES event(id)
+-- );
+
+
+-- Club_topics
+create table section_topics(
+	sectionid integer,
+	topic varchar(100),
+	PRIMARY KEY (sectionid, topic),
+	FOREIGN KEY (sectionid) REFERENCES section(sectionid),
+	FOREIGN KEY (topic) REFERENCES keywords(topic)
+);
+
+-- Comment
+create table comment(
+	comment_id integer auto_increment,
+	commenter varchar(30),
+	ctext varchar(255),
+	is_public_c boolean,
+	PRIMARY KEY (comment_id),
+	FOREIGN KEY (commenter) REFERENCES person(pid)
+);
+
+-- idea comment
+create table idea_comment(
+	comment_id integer,
+	id integer,
+	PRIMARY KEY (comment_id),
+	FOREIGN KEY (comment_id) REFERENCES comment(comment_id),
+	FOREIGN KEY (id) REFERENCES idea(id)
+);
+
+-- section comment
+create table section_comment(
+	comment_id integer,
+	sectionid integer,
+	PRIMARY KEY (comment_id),
+	FOREIGN KEY (comment_id) REFERENCES comment(comment_id),
+	FOREIGN KEY (sectionid) REFERENCES section(sectionid)
+);
 --  Person Table 
 INSERT INTO person (pid, passwd, fname, lname) VALUES ('25', md5('xx'), 'XX', 'XX');
 INSERT INTO person (pid, passwd, fname, lname) VALUES ('1', md5('1234'), 'Ariana', 'Anastos');
@@ -306,5 +464,9 @@ INSERT INTO idea_comment (comment_id, id) VALUES (6, 7);
 INSERT INTO idea_comment (comment_id, id) VALUES (7, 5);
 INSERT INTO idea_comment (comment_id, id) VALUES (10, 5);
 INSERT INTO idea_comment (comment_id, id) VALUES (11, 9);
+
+
+
+
 
 
